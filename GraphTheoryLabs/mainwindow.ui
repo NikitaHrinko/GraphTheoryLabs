@@ -94,14 +94,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushFillTable">
+               <widget class="QPushButton" name="pushTableFill">
                 <property name="text">
                  <string>Fill table</string>
                 </property>
                </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="lineEditTableItemValue"/>
               </item>
               <item>
                <widget class="QPushButton" name="pushTableSave">

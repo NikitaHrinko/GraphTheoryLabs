@@ -14,7 +14,7 @@ using namespace std;
 
 vector< vector<int> > readAdjMatrix(QTableWidget* tableWidget);
 vector< vector<int> > convertAdjMatrix(const vector< vector<int> >&);
-int readInt(QString title, QString label, int maxVal);
+int readInt(QString title, QString label, int minValue, int maxVal);
 
 void outputResults(const vector<int> list, QListWidget* listWidget);
 
@@ -53,13 +53,13 @@ void MainWindow::on_pushItemsRemove_clicked()
 
 void MainWindow::on_pushTableFill_clicked()
 {
-    auto text = ui->lineEditTableItemValue->text();
+	int value = readInt("Fill value", "Input values to fill the table with", -100, 100);
     auto tableWidget = ui->tableWidget;
     for (int row = 0; row < tableWidget->rowCount(); ++row) {
         for (int column = 0; column < tableWidget->columnCount(); ++column) {
             QTableWidgetItem *item = new QTableWidgetItem();
             if (column != row) {
-                item->setText(text);
+				item->setText(QString::number(value));
             } else {
                 item->setText(QString::number(0));
             }
@@ -90,7 +90,7 @@ void MainWindow::callSearchFunction(const GraphSearch::SearchMethod &sm)
         return;
     }
 
-    int startPos = readInt("Starting number", "Input starting vertice number", table.size()) - 1;
+	int startPos = readInt("Starting number", "Input starting vertice number", 1, table.size()) - 1;
 
     vector< vector<int> > graph = convertAdjMatrix(table);
     vector<int> results;
@@ -142,9 +142,9 @@ vector< vector<int> > convertAdjMatrix(const vector< vector<int> >& vec) {
     return results;
 }
 
-int readInt(QString title, QString label, int maxVal) {
+int readInt(QString title, QString label, int minVal, int maxVal) {
     bool ok;
-    int val = QInputDialog().getInt(nullptr, title, label, 0, 1, maxVal, 1, &ok);
+	int val = QInputDialog().getInt(nullptr, title, label, 0, minVal, maxVal, 1, &ok);
     if (!ok) {
         return -1;
     }

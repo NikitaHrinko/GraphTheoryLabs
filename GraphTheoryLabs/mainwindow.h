@@ -30,7 +30,7 @@ private slots:
 
     void on_pushTableSave_clicked();
 
-    void on_pushTableLoad_clicked();
+	void on_pushTableLoad_clicked();
 
 private:
     Ui::MainWindow *ui;
