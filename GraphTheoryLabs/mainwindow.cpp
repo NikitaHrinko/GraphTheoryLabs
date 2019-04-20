@@ -7,6 +7,7 @@
 
 #include "graphsearch.h"
 #include <vector>
+#include <algorithm>
 
 #include <fstream>
 
@@ -26,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -39,7 +39,6 @@ void MainWindow::on_pushItemsAdd_clicked()
     ui->tableWidget->insertColumn(columns);
     ui->tableWidget->setColumnWidth(columns, 30);
 }
-
 void MainWindow::on_pushItemsRemove_clicked()
 {
     auto tableWidget = ui->tableWidget;
@@ -51,7 +50,6 @@ void MainWindow::on_pushItemsRemove_clicked()
         tableWidget->removeRow(ui->tableWidget->rowCount() - 1);
     }
 }
-
 void MainWindow::on_pushTableFill_clicked()
 {
 	int value = readInt("Fill value", "Input values to fill the table with", -100, 100);
@@ -59,11 +57,11 @@ void MainWindow::on_pushTableFill_clicked()
     for (int row = 0; row < tableWidget->rowCount(); ++row) {
         for (int column = 0; column < tableWidget->columnCount(); ++column) {
             QTableWidgetItem *item = new QTableWidgetItem();
-            if (column != row) {
+//            if (column != row) {
 				item->setText(QString::number(value));
-            } else {
-                item->setText(QString::number(0));
-            }
+//            } else {
+//                item->setText(QString::number(0));
+//            }
             tableWidget->setItem(row, column, item);
         }
     }
@@ -73,12 +71,10 @@ void MainWindow::on_pushVerticesDFS_clicked()
 {
     callSearchFunction(GraphSearch::DFS);
 }
-
 void MainWindow::on_pushVerticesBFS_clicked()
 {
-    callSearchFunction(GraphSearch::BFS);
+	callSearchFunction(GraphSearch::BFS);
 }
-
 void MainWindow::callSearchFunction(const GraphSearch::SearchMethod &sm)
 {
     vector< vector<int> > table = readAdjMatrix(ui->tableWidget);
@@ -109,9 +105,9 @@ void MainWindow::callSearchFunction(const GraphSearch::SearchMethod &sm)
         mb->show();
         return;
     }
-    outputResults(results, ui->listWidget);
+	outputResults(results, ui->listWidget);
+	ui->labelListTitle->setText("Search order");
 }
-
 
 vector< vector<int> > readAdjMatrix(QTableWidget* tableWidget) {
     int rows = tableWidget->rowCount(),
@@ -164,7 +160,6 @@ void MainWindow::on_pushTableSave_clicked()
         mb->show();
     }
 }
-
 void MainWindow::on_pushTableLoad_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, "Select file to save the matrix");
@@ -212,12 +207,75 @@ void MainWindow::on_pushMSTPrims_clicked()
 	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
 	int INF = readInt("INF value", "Input edge weight to mark that there's no edge", -100, 100);
 	outputResults(gs.mstPrims(matrix, INF), ui->tableWidget);
+	ui->labelListTitle->setText("");
 }
-
 void MainWindow::on_pushMSTKruskals_clicked()
 {
 	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
 	outputResults(gs.mstKruskals(matrix), ui->tableWidget);
+	ui->labelListTitle->setText("");
+}
+
+void MainWindow::on_pushSCC_clicked()
+{
+	ui->listWidget->clear();
+
+	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
+	int n = matrix.size();
+	vector< vector<int> > gFront(n), gBack(n);
+
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			if (matrix[i][j] > 0) {
+				gFront[i].push_back(j);
+				gBack[j].push_back(i);
+			}
+		}
+	}
+
+	vector< vector<int> > components = gs.stronglyConnectedComponents(gFront, gBack);
+	vector< vector<int> > newMatrix(components.size(), vector<int>(components.size()));
+	int compIndex = 0;
+	for(const auto& component : components) {
+		QString componentStr;
+		for (int i = 0; i < component.size() - 1; ++i) {
+			componentStr += QString::number(component[i] + 1) + ", ";
+		}
+		componentStr += QString::number(component.back() + 1);
+		ui->listWidget->addItem(componentStr);
+
+		for (int i = 0; i < component.size(); ++i) { //i = component item index
+			int item = component[i];
+			for (int j = 0; j < matrix[item].size(); ++j) { //j = current vertice index
+				if (matrix[item][j] > 0 && //j is reachable from this component and j is not in it
+						(std::find(component.begin(), component.end(), j) == component.end())) {
+					vector<int> connectedTo;
+					for (int k = 0; k < components.size(); ++k) { //k = component that contains vertice j
+						if (k != compIndex && std::find(components[k].begin(), components[k].end(), j) != components[k].end()) {
+							connectedTo.push_back(k); // component k is reachable from current one
+						}
+					}
+					for (const auto& it : connectedTo) {
+						newMatrix[compIndex][it] = 1;
+					}
+				}
+			}
+		}
+		++compIndex;
+	}
+
+	int N = newMatrix.size();
+	if (ui->tableWidget->rowCount() > N) {
+		for (int i = ui->tableWidget->rowCount(); i > N; --i) {
+			on_pushItemsRemove_clicked();
+		}
+	} else {
+		for (int i = ui->tableWidget->rowCount(); i < N; ++i) {
+			on_pushItemsAdd_clicked();
+		}
+	}
+	outputResults(newMatrix, ui->tableWidget);
+	ui->labelListTitle->setText("Components");
 }
 
 int readInt(QString title, QString label, int minVal, int maxVal) {

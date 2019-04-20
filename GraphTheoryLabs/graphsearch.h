@@ -16,7 +16,8 @@ public:
 	std::vector< std::vector<int> > mstPrims(const std::vector< std::vector<int> >& g, const int& INF);
 	std::vector< std::vector<int> > mstKruskals(const std::vector< std::vector<int> >& g);
 
-    std::vector< std::vector<int> > spanningTreePrim(const std::vector< std::vector<int> >& g);
+	std::vector< std::vector<int> > stronglyConnectedComponents(const std::vector< std::vector<int> >& gForwards,
+																const std::vector< std::vector<int> >& gBackwards);
 
     enum SearchMethod {
         DFS, BFS

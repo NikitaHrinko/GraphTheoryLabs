@@ -7,6 +7,11 @@ using namespace std;
 
 vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF);
 
+void dfsOrder (const vector<vector<int> > &g, vector<char> &visited,
+		   int pos, vector<int>& order);
+void dfsComponent(const vector<vector<int> > &g, vector<char> &visited,
+		   int pos, vector<int>& currentComponent);
+
 std::vector<int> GraphSearch::dfsSimple(const vector<vector<int> > &g, vector<bool> &visited,
                                         int pos, vector<int>& res)
 {
@@ -131,7 +136,6 @@ std::vector<std::vector<int> > GraphSearch::mstKruskals(const std::vector<std::v
 
 	return result;
 }
-
 vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF) {
 	vector< pair< int, pair<int, int> > > results;
 	for (int i = 0; i < vec.size(); ++i) {
@@ -142,4 +146,50 @@ vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< 
 		}
 	}
 	return results;
+}
+
+std::vector<std::vector<int> > GraphSearch::stronglyConnectedComponents(const std::vector<std::vector<int> > &gForwards, const std::vector<std::vector<int> > &gBackwards)
+{
+	int n = gForwards.size();
+	vector<char> used;
+	vector<int> order, currentComponent;
+	vector< vector<int> > result;
+
+	used.assign (n, false);
+	for (int i = 0; i < n; ++i) {
+		if (!used[i])
+			dfsOrder(gForwards, used, i, order);
+	}
+
+	used.assign (n, false);
+	for (int i = 0; i < n; ++i) {
+		int v = order[n-1-i];
+		if (!used[v]) {
+			dfsComponent(gBackwards, used, v, currentComponent);
+//			... вывод очередной component ...
+			result.push_back(currentComponent);
+			currentComponent.clear();
+		}
+	}
+	return result;
+}
+void dfsOrder (const vector<vector<int> > &g, vector<char> &visited,
+		   int pos, vector<int>& order) {
+	visited[pos] = true;
+	for (size_t i = 0; i < g[pos].size(); ++i) {
+		if (!visited[g[pos][i]]) {
+			dfsOrder (g, visited, g[pos][i], order);
+		}
+	}
+	order.push_back (pos);
+}
+void dfsComponent (const vector<vector<int> > &g, vector<char> &visited,
+		   int pos, vector<int>& currentComponent) {
+	visited[pos] = true;
+	currentComponent.push_back (pos);
+	for (size_t i = 0; i < g[pos].size(); ++i) {
+		if (!visited[g[pos][i]]) {
+			dfsComponent (g, visited, g[pos][i], currentComponent);
+		}
+	}
 }

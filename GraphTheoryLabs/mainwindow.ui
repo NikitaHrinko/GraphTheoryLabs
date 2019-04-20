@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
+    <width>600</width>
     <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>550</width>
+    <width>600</width>
     <height>300</height>
    </size>
   </property>
@@ -135,6 +135,27 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="Line" name="line_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushSCC">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Strongly connected
+components</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -161,20 +182,27 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QListWidget" name="listWidget"/>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="pushVerticesDFS">
+              <property name="text">
+               <string>Vertices DFS</string>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
+             <widget class="QListWidget" name="listWidget"/>
+            </item>
+            <item row="2" column="0">
              <widget class="QPushButton" name="pushVerticesBFS">
               <property name="text">
                <string>Vertices BFS</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="pushVerticesDFS">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelListTitle">
               <property name="text">
-               <string>Vertices DFS</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -193,7 +221,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>550</width>
+     <width>600</width>
      <height>20</height>
     </rect>
    </property>
