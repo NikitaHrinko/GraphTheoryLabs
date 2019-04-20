@@ -4,6 +4,9 @@
 #include <iostream>
 
 using namespace std;
+
+vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF);
+
 std::vector<int> GraphSearch::dfsSimple(const vector<vector<int> > &g, vector<bool> &visited,
                                         int pos, vector<int>& res)
 {
@@ -90,4 +93,53 @@ std::vector<std::vector<int> > GraphSearch::mstPrims(const std::vector<std::vect
 		}
 	}
 	return result;
+}
+
+std::vector<std::vector<int> > GraphSearch::mstKruskals(const std::vector<std::vector<int> > &g)
+{
+	vector < pair < int, pair<int,int> > > gList;
+
+	gList = convertAdjMatrixWithWeights(g, 0);
+
+	int n = g.size(), m = gList.size();
+	int cost = 0;
+	vector < pair<int,int> > resultList;
+	vector < vector<int> > result(n, vector<int>(n, 0));
+
+	sort (gList.begin(), gList.end());
+	vector<int> tree_id (n);
+	for (int i=0; i<n; ++i) {
+		tree_id[i] = i;
+	}
+	for (int i=0; i<m; ++i) {
+		int a = gList[i].second.first,  b = gList[i].second.second,  l = gList[i].first;
+		if (tree_id[a] != tree_id[b]) {
+			cost += l;
+			resultList.push_back (make_pair (a, b));
+			int old_id = tree_id[b],  new_id = tree_id[a];
+			for (int j=0; j<n; ++j) {
+				if (tree_id[j] == old_id) {
+					tree_id[j] = new_id;
+				}
+			}
+		}
+	}
+
+	for (const auto& item : resultList) {
+		result[item.first][item.second] = result[item.second][item.first] = g[item.second][item.first];
+	}
+
+	return result;
+}
+
+vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF) {
+	vector< pair< int, pair<int, int> > > results;
+	for (int i = 0; i < vec.size(); ++i) {
+		for (int j = i; j < vec.size(); ++j) {
+			if (vec[i][j] != INF) {
+				results.push_back(make_pair(vec[i][j], make_pair(i, j))); // weight, (v1, v2)
+			}
+		}
+	}
+	return results;
 }

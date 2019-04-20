@@ -128,6 +128,13 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QPushButton" name="pushMSTKruskals">
+                <property name="text">
+                 <string>Kruskal's MST</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>

@@ -7,7 +7,6 @@
 
 #include "graphsearch.h"
 #include <vector>
-#include <utility>
 
 #include <fstream>
 
@@ -15,7 +14,6 @@ using namespace std;
 
 vector< vector<int> > readAdjMatrix(QTableWidget* tableWidget);
 vector< vector<int> > convertAdjMatrix(const vector< vector<int> >&);
-vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF);
 
 int readInt(QString title, QString label, int minValue, int maxVal);
 
@@ -145,20 +143,6 @@ vector< vector<int> > convertAdjMatrix(const vector< vector<int> >& vec) {
 	return results;
 }
 
-vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF) {
-	vector< pair< int, pair<int, int> > > results;
-	for (int i = 0; i < vec.size(); ++i) {
-		for (int j = i; j < vec.size(); ++j) {
-			if (vec[i][j] != INF) {
-				results.push_back(make_pair(vec[i][j], make_pair(i, j))); // weight, (v1, v2)
-			}/* else if (vec[i][j] < 0) {
-				results[j].push_back(i);
-			}*/
-		}
-	}
-	return results;
-}
-
 void MainWindow::on_pushTableSave_clicked()
 {
     vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
@@ -228,6 +212,12 @@ void MainWindow::on_pushMSTPrims_clicked()
 	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
 	int INF = readInt("INF value", "Input edge weight to mark that there's no edge", -100, 100);
 	outputResults(gs.mstPrims(matrix, INF), ui->tableWidget);
+}
+
+void MainWindow::on_pushMSTKruskals_clicked()
+{
+	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
+	outputResults(gs.mstKruskals(matrix), ui->tableWidget);
 }
 
 int readInt(QString title, QString label, int minVal, int maxVal) {

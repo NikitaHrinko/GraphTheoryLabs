@@ -34,6 +34,8 @@ private slots:
 
 	void on_pushMSTPrims_clicked();
 
+	void on_pushMSTKruskals_clicked();
+
 private:
     Ui::MainWindow *ui;
     GraphSearch gs;

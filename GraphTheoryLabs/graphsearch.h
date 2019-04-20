@@ -14,6 +14,7 @@ public:
     std::vector<int> bfs(const std::vector< std::vector<int> >& g, int pos);
 
 	std::vector< std::vector<int> > mstPrims(const std::vector< std::vector<int> >& g, const int& INF);
+	std::vector< std::vector<int> > mstKruskals(const std::vector< std::vector<int> >& g);
 
     std::vector< std::vector<int> > spanningTreePrim(const std::vector< std::vector<int> >& g);
 
