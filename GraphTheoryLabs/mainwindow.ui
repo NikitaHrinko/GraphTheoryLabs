@@ -114,6 +114,20 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushMSTPrims">
+                <property name="text">
+                 <string>Prim's MST</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>

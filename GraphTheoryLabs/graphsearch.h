@@ -6,12 +6,14 @@
 class GraphSearch
 {
     std::vector<int> dfsSimple(const std::vector< std::vector<int> >& g, std::vector<bool>& visited,
-                               int pos, std::vector<int>& res);
+							   int pos, std::vector<int>& res);
 
 public:
     GraphSearch();
     std::vector<int> dfs(const std::vector< std::vector<int> >& g, int pos);
     std::vector<int> bfs(const std::vector< std::vector<int> >& g, int pos);
+
+	std::vector< std::vector<int> > mstPrims(const std::vector< std::vector<int> >& g, const int& INF);
 
     std::vector< std::vector<int> > spanningTreePrim(const std::vector< std::vector<int> >& g);
 

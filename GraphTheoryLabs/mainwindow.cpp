@@ -7,6 +7,7 @@
 
 #include "graphsearch.h"
 #include <vector>
+#include <utility>
 
 #include <fstream>
 
@@ -14,10 +15,12 @@ using namespace std;
 
 vector< vector<int> > readAdjMatrix(QTableWidget* tableWidget);
 vector< vector<int> > convertAdjMatrix(const vector< vector<int> >&);
+vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF);
+
 int readInt(QString title, QString label, int minValue, int maxVal);
 
 void outputResults(const vector<int> list, QListWidget* listWidget);
-
+void outputResults(const vector< vector<int> >& matrix, QTableWidget* tableWidget);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -129,40 +132,31 @@ vector< vector<int> > readAdjMatrix(QTableWidget* tableWidget) {
     return results;
 }
 vector< vector<int> > convertAdjMatrix(const vector< vector<int> >& vec) {
-    vector< vector<int> > results(vec.size(), vector<int>());
-    for (int i = 0; i < vec.size(); ++i) {
-        for (int j = 0; j < vec.size(); ++j) {
-            if (vec[i][j] > 0) {
-                results[i].push_back(j);
-            }/* else if (vec[i][j] < 0) {
-                results[j].push_back(i);
-            }*/
-        }
-    }
-    return results;
+	vector< vector<int> > results(vec.size(), vector<int>());
+	for (int i = 0; i < vec.size(); ++i) {
+		for (int j = 0; j < vec.size(); ++j) {
+			if (vec[i][j] > 0) {
+				results[i].push_back(j);
+			}/* else if (vec[i][j] < 0) {
+				results[j].push_back(i);
+			}*/
+		}
+	}
+	return results;
 }
 
-int readInt(QString title, QString label, int minVal, int maxVal) {
-    bool ok;
-	int val = QInputDialog().getInt(nullptr, title, label, 0, minVal, maxVal, 1, &ok);
-    if (!ok) {
-        return -1;
-    }
-    return val;
-}
-
-void outputResults(const vector<int> list, QListWidget* listWidget) {
-    listWidget->clear();
-    if (list.empty()) {
-        QMessageBox* mb = new QMessageBox();
-        mb->setWindowTitle("Starting position");
-        mb->setText("Invalid index");
-        mb->show();
-        return;
-    }
-    for (const auto& item : list) {
-        listWidget->addItem(QString::number(item + 1));
-    }
+vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< vector<int> >& vec, const int& INF) {
+	vector< pair< int, pair<int, int> > > results;
+	for (int i = 0; i < vec.size(); ++i) {
+		for (int j = i; j < vec.size(); ++j) {
+			if (vec[i][j] != INF) {
+				results.push_back(make_pair(vec[i][j], make_pair(i, j))); // weight, (v1, v2)
+			}/* else if (vec[i][j] < 0) {
+				results[j].push_back(i);
+			}*/
+		}
+	}
+	return results;
 }
 
 void MainWindow::on_pushTableSave_clicked()
@@ -227,4 +221,47 @@ void MainWindow::on_pushTableLoad_clicked()
         mb->setText("Failed to load specified file");
         mb->show();
     }
+}
+
+void MainWindow::on_pushMSTPrims_clicked()
+{
+	vector< vector<int> > matrix = readAdjMatrix(ui->tableWidget);
+	int INF = readInt("INF value", "Input edge weight to mark that there's no edge", -100, 100);
+	outputResults(gs.mstPrims(matrix, INF), ui->tableWidget);
+}
+
+int readInt(QString title, QString label, int minVal, int maxVal) {
+	bool ok;
+	int val = QInputDialog().getInt(nullptr, title, label, 0, minVal, maxVal, 1, &ok);
+	if (!ok) {
+		return -1;
+	}
+	return val;
+}
+
+void outputResults(const vector<int> list, QListWidget* listWidget) {
+	listWidget->clear();
+	if (list.empty()) {
+		QMessageBox* mb = new QMessageBox();
+		mb->setWindowTitle("Starting position");
+		mb->setText("Invalid index");
+		mb->show();
+		return;
+	}
+	for (const auto& item : list) {
+		listWidget->addItem(QString::number(item + 1));
+	}
+}
+
+void outputResults( const vector< vector<int> >& matrix, QTableWidget* tableWidget) {
+	int rows = tableWidget->rowCount(),
+			columns = tableWidget->columnCount();
+
+	for (int row = 0; row < rows; ++row) {
+		for (int column = 0; column < columns; ++column) {
+			QTableWidgetItem *item = new QTableWidgetItem();
+			item->setText(QString::number(matrix[row][column]));
+			tableWidget->setItem(row, column, item);
+		}
+	}
 }

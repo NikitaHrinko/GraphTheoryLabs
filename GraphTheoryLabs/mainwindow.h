@@ -32,6 +32,8 @@ private slots:
 
 	void on_pushTableLoad_clicked();
 
+	void on_pushMSTPrims_clicked();
+
 private:
     Ui::MainWindow *ui;
     GraphSearch gs;

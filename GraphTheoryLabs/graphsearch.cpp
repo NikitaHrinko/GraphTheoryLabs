@@ -1,6 +1,7 @@
 #include "graphsearch.h"
 
 #include <queue>
+#include <iostream>
 
 using namespace std;
 std::vector<int> GraphSearch::dfsSimple(const vector<vector<int> > &g, vector<bool> &visited,
@@ -51,5 +52,42 @@ std::vector<int> GraphSearch::bfs(const std::vector<std::vector<int> > &g, int p
         }
     }
 
-    return results;
+	return results;
+}
+
+std::vector<std::vector<int> > GraphSearch::mstPrims(const std::vector<std::vector<int> > &g, const int& INF)
+{
+	int n = g.size();
+
+	vector< vector<int> > result(n, vector<int>(n, INF));
+
+	vector<bool> visited (n);
+	vector<int> minimalEdgeCosts (n, INF), selectedEdges (n, -1);
+	minimalEdgeCosts[0] = 0;
+	for (int i = 0; i < n; ++i) {
+		int v = -1;
+		for (int j = 0; j < n ; ++j) {
+			if (!visited[j] && (v == -1 || minimalEdgeCosts[j] < minimalEdgeCosts[v]))
+				v = j;
+		}
+		if (minimalEdgeCosts[v] == INF) {
+			return vector< vector<int> > ();
+		}
+
+		visited[v] = true;
+		if (selectedEdges[v] != -1){
+			result[selectedEdges[v]][v] = result[v][selectedEdges[v]] = g[v][selectedEdges[v]];
+			cout << v << ' ';
+			cout << selectedEdges[v] << " : ";
+			cout << g[v][selectedEdges[v]] << endl;
+		}
+
+		for (int to = 0; to < n; ++to) {
+			if (g[v][to] < minimalEdgeCosts[to]) {
+				minimalEdgeCosts[to] = g[v][to];
+				selectedEdges[to] = v;
+			}
+		}
+	}
+	return result;
 }
