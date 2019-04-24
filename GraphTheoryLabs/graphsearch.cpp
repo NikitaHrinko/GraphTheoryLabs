@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -166,7 +167,6 @@ std::vector<std::vector<int> > GraphSearch::stronglyConnectedComponents(const st
 		int v = order[n-1-i];
 		if (!used[v]) {
 			dfsComponent(gBackwards, used, v, currentComponent);
-//			... вывод очередной component ...
 			result.push_back(currentComponent);
 			currentComponent.clear();
 		}
