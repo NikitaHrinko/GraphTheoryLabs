@@ -79,16 +79,16 @@ std::vector<std::vector<int> > GraphSearch::mstPrims(const std::vector<std::vect
 			if (!visited[j] && (v == -1 || minimalEdgeCosts[j] < minimalEdgeCosts[v]))
 				v = j;
 		}
-		if (minimalEdgeCosts[v] == INF) {
+        if (minimalEdgeCosts[v] == INF) {
 			return vector< vector<int> > ();
 		}
 
 		visited[v] = true;
 		if (selectedEdges[v] != -1){
 			result[selectedEdges[v]][v] = result[v][selectedEdges[v]] = g[v][selectedEdges[v]];
-			cout << v << ' ';
-			cout << selectedEdges[v] << " : ";
-			cout << g[v][selectedEdges[v]] << endl;
+//			cout << v << ' ';
+//			cout << selectedEdges[v] << " : ";
+//			cout << g[v][selectedEdges[v]] << endl;
 		}
 
 		for (int to = 0; to < n; ++to) {
@@ -152,21 +152,21 @@ vector< pair < int, pair<int,int> > > convertAdjMatrixWithWeights(const vector< 
 std::vector<std::vector<int> > GraphSearch::stronglyConnectedComponents(const std::vector<std::vector<int> > &gForwards, const std::vector<std::vector<int> > &gBackwards)
 {
 	int n = gForwards.size();
-	vector<char> used;
+    vector<char> visited;
 	vector<int> order, currentComponent;
 	vector< vector<int> > result;
 
-	used.assign (n, false);
+    visited.assign (n, false);
 	for (int i = 0; i < n; ++i) {
-		if (!used[i])
-			dfsOrder(gForwards, used, i, order);
+        if (!visited[i])
+            dfsOrder(gForwards, visited, i, order);
 	}
 
-	used.assign (n, false);
+    visited.assign (n, false);
 	for (int i = 0; i < n; ++i) {
 		int v = order[n-1-i];
-		if (!used[v]) {
-			dfsComponent(gBackwards, used, v, currentComponent);
+        if (!visited[v]) {
+            dfsComponent(gBackwards, visited, v, currentComponent);
 			result.push_back(currentComponent);
 			currentComponent.clear();
 		}
